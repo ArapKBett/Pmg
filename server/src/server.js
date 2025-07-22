@@ -8,6 +8,7 @@ const { sequelize } = require('./models');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 const config = require('./config/server');
 
 // Import routes
@@ -67,20 +68,17 @@ sequelize.authenticate()
   .then(() => console.log('Database connected successfully'))
   .catch(err => console.error('Database connection error:', err));
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/credentials', credentialRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/user', userRoutes);
 
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../web-ui/dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../web-ui/dist/index.html')));
-  });
-}
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
+});
 
 // Error handling
 app.use((err, req, res, next) => {
