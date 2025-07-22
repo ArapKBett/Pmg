@@ -10,6 +10,8 @@ const WebSocket = require('ws');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const config = require('./config/server');
+const { check } = require('express-validator');
+const { authenticate } = require('./middleware/validator');
 
 // Import routes
 const authRoutes = require('./routes/auth');
