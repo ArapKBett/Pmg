@@ -1,0 +1,64 @@
+/* browser-extension/popup/popup.css */
+body {
+  width: 300px;
+  padding: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.hidden {
+  display: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.view {
+  margin-top: 10px;
+}
+
+.search-container {
+  margin-bottom: 10px;
+}
+
+#search {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.credentials-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.credential-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.credential-item:hover {
+  background-color: #f5f5f5;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3367d6;
+}
