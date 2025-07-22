@@ -1,50 +1,46 @@
-// server/src/config/database.js
+// src/config/database.js
 require('dotenv').config();
 
-const parseDbUrl = require('parse-database-url');
-
-// Function to extract connection parameters from DATABASE_URL
-function getConfig() {
-  if (process.env.DATABASE_URL) {
-    const config = parseDbUrl(process.env.DATABASE_URL);
+function parseDatabaseUrl() {
+  if (!process.env.DATABASE_URL) return null;
+  
+  try {
+    const url = new URL(process.env.DATABASE_URL);
     return {
-      username: config.user,
-      password: config.password,
-      database: config.database,
-      host: config.host,
-      port: config.port,
-      dialect: 'postgres',
-      dialectOptions: {
-        ssl: process.env.NODE_ENV === 'production' ? {
-          require: true,
-          rejectUnauthorized: false
-        } : false
-      }
+      username: url.username,
+      password: url.password,
+      host: url.hostname,
+      port: url.port,
+      database: url.pathname.slice(1)
     };
+  } catch (err) {
+    console.error('Error parsing DATABASE_URL:', err);
+    return null;
   }
-
-  return {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    dialect: 'postgres'
-  };
 }
+
+const dbConfig = parseDatabaseUrl() || {
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT
+};
 
 module.exports = {
   development: {
-    ...getConfig(),
+    ...dbConfig,
+    dialect: 'postgres',
     logging: console.log
   },
   test: {
-    ...getConfig(),
-    database: `${process.env.DB_NAME}_test` || `${getConfig().database}_test`,
-    logging: false
+    ...dbConfig,
+    database: `${dbConfig.database}_test`,
+    dialect: 'postgres'
   },
   production: {
-    ...getConfig(),
+    ...dbConfig,
+    dialect: 'postgres',
     logging: false,
     pool: {
       max: 5,
