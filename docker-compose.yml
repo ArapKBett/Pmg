@@ -1,0 +1,59 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  server:
+    build: ./server
+    ports:
+      - "3001:3000"
+      - "3002:3001" # WebSocket
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_USER=${DB_USER:-pmadmin}
+      - DB_PASSWORD=${DB_PASSWORD:-securepassword123}
+      - DB_NAME=${DB_NAME:-passwordmanager}
+      - JWT_SECRET=${JWT_SECRET:-your_very_secure_jwt_secret}
+    depends_on:
+      - db
+    networks:
+      - backend
+    volumes:
+      - ./server:/app
+      - ./web-ui/dist:/app/public
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER:-pmadmin}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-securepassword123}
+      - POSTGRES_DB=${DB_NAME:-passwordmanager}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pmadmin}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web-ui/dist:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - server
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  pgdata:
