@@ -1,0 +1,36 @@
+<!-- browser-extension/popup/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Password Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>Password Manager</h1>
+    </div>
+    
+    <div id="login-view" class="view">
+      <p>Please login to the web interface first</p>
+      <button id="open-web">Open Web Interface</button>
+    </div>
+    
+    <div id="main-view" class="view hidden">
+      <div class="search-container">
+        <input type="text" id="search" placeholder="Search credentials...">
+      </div>
+      
+      <div id="credentials-list" class="credentials-list"></div>
+      
+      <div class="actions">
+        <button id="add-new">Add New</button>
+        <button id="refresh">Refresh</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
